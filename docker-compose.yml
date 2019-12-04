@@ -1,0 +1,14 @@
+version: '3'
+services:
+  reverse-proxy:
+    image: traefik # The official Traefik docker image
+    command: --docker # Enables the web UI and tells Traefik to listen to docker
+    ports:
+      - "80:80"     # The HTTP port
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
+  notebook:
+    build: .
+    labels:
+      - "traefik.frontend.rule=Host:docker.localhost;PathPrefix:/function/notebook"
+      - "traefik.port=8080"
